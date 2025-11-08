@@ -1,0 +1,231 @@
+import { useState, useEffect } from 'react';
+import { Plus, Target, TrendingUp, BookOpen } from 'lucide-react';
+import { Semester, GoalData } from '../types';
+import { calculateCGPA, getTotalCredits } from '../utils/gpaCalculations';
+import { useAuth } from '../contexts/AuthContext';
+import { semesterService, courseService, goalService } from '../services/database';
+import SemesterCard from './SemesterCard';
+import GoalCard from './GoalCard';
+import AddSemesterModal from './AddSemesterModal';
+
+interface DashboardProps {
+  onValuesChange?: (cgpa: number, credits: number) => void;
+}
+
+const Dashboard = ({ onValuesChange }: DashboardProps) => {
+  const { user } = useAuth();
+  const [semesters, setSemesters] = useState<Semester[]>([]);
+  const [goal, setGoal] = useState<GoalData | null>(null);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadData = async () => {
+      if (!user) return;
+      try {
+        setLoading(true);
+        const semestedData = await semesterService.getAll(user.id);
+        for (const semester of semestedData) {
+          semester.courses = await courseService.getBySemesterId(semester.id);
+        }
+        setSemesters(semestedData);
+        const goalData = await goalService.get(user.id);
+        setGoal(goalData);
+      } catch (error) {
+        console.error('Error loading data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
+  }, [user]);
+
+  const cgpa = calculateCGPA(semesters);
+  const totalCredits = getTotalCredits(semesters);
+
+  useEffect(() => {
+    if (onValuesChange) {
+      onValuesChange(cgpa, totalCredits);
+    }
+  }, [cgpa, totalCredits, onValuesChange]);
+
+  const handleAddSemester = async (name: string) => {
+    if (!user) return;
+    try {
+      const newSemester = await semesterService.create(user.id, name);
+      setSemesters([...semesters, newSemester]);
+      setIsAddModalOpen(false);
+    } catch (error) {
+      console.error('Error adding semester:', error);
+    }
+  };
+
+  const handleDeleteSemester = async (id: string) => {
+    try {
+      await semesterService.delete(id);
+      setSemesters(semesters.filter(s => s.id !== id));
+    } catch (error) {
+      console.error('Error deleting semester:', error);
+    }
+  };
+
+  const handleUpdateSemester = async (updatedSemester: Semester) => {
+    try {
+      await semesterService.update(updatedSemester.id, updatedSemester.name);
+      setSemesters(semesters.map(s => s.id === updatedSemester.id ? updatedSemester : s));
+    } catch (error) {
+      console.error('Error updating semester:', error);
+    }
+  };
+
+  const handleSaveGoal = async (targetCGPA: number) => {
+    if (!user) return;
+    try {
+      await goalService.upsert(user.id, targetCGPA);
+      setGoal({ targetCGPA });
+    } catch (error) {
+      console.error('Error saving goal:', error);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-400">Loading your data...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border-l-4 border-blue-500">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">Current CGPA</p>
+              <p className="text-3xl font-bold text-gray-900 dark:text-white mt-1">
+                {cgpa.toFixed(2)}
+              </p>
+            </div>
+            <div className="bg-blue-100 dark:bg-blue-900/30 p-3 rounded-lg">
+              <TrendingUp className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border-l-4 border-green-500">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">Total Credits</p>
+              <p className="text-3xl font-bold text-gray-900 dark:text-white mt-1">
+                {totalCredits}
+              </p>
+            </div>
+            <div className="bg-green-100 dark:bg-green-900/30 p-3 rounded-lg">
+              <BookOpen className="w-6 h-6 text-green-600 dark:text-green-400" />
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border-l-4 border-purple-500">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">Semesters</p>
+              <p className="text-3xl font-bold text-gray-900 dark:text-white mt-1">
+                {semesters.length}
+              </p>
+            </div>
+            <div className="bg-purple-100 dark:bg-purple-900/30 p-3 rounded-lg">
+              <Target className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {goal && (
+        <GoalCard
+          currentCGPA={cgpa}
+          targetCGPA={goal.targetCGPA}
+          onUpdateGoal={handleSaveGoal}
+        />
+      )}
+
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">My Semesters</h2>
+        <button
+          onClick={() => setIsAddModalOpen(true)}
+          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors shadow-md"
+        >
+          <Plus className="w-5 h-5" />
+          Add Semester
+        </button>
+      </div>
+
+      {semesters.length === 0 ? (
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-12 text-center">
+          <div className="bg-gray-100 dark:bg-gray-700 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+            <BookOpen className="w-8 h-8 text-gray-400 dark:text-gray-500" />
+          </div>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">No semesters yet</h3>
+          <p className="text-gray-600 dark:text-gray-400 mb-4">
+            Start tracking your academic progress by adding your first semester
+          </p>
+          <button
+            onClick={() => setIsAddModalOpen(true)}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors"
+          >
+            Add Your First Semester
+          </button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 gap-4">
+          {semesters.map((semester) => (
+            <SemesterCard
+              key={semester.id}
+              semester={semester}
+              onDelete={handleDeleteSemester}
+              onUpdate={handleUpdateSemester}
+            />
+          ))}
+        </div>
+      )}
+
+      {!goal && semesters.length > 0 && (
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700 rounded-lg shadow-md p-6 border border-blue-200 dark:border-gray-600">
+          <div className="flex items-start gap-4">
+            <div className="bg-blue-100 dark:bg-blue-900/30 p-3 rounded-lg">
+              <Target className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+            </div>
+            <div className="flex-1">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                Set Your Goal
+              </h3>
+              <p className="text-gray-700 dark:text-gray-300 mb-4">
+                Track your progress by setting a target CGPA goal
+              </p>
+              <button
+                onClick={() => handleSaveGoal(3.5)}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors text-sm"
+              >
+                Set Goal
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isAddModalOpen && (
+        <AddSemesterModal
+          onClose={() => setIsAddModalOpen(false)}
+          onAdd={handleAddSemester}
+        />
+      )}
+    </div>
+  );
+};
+
+export default Dashboard;
