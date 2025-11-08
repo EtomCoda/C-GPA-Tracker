@@ -19,13 +19,20 @@ export const semesterService = {
   },
 
   async create(userId: string, name: string): Promise<Semester> {
-    const { data, error } = await supabase
+    const { data, error, status, statusText } = await supabase
       .from('semesters')
       .insert([{ user_id: userId, name }])
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw new Error(`Supabase error: ${error.message} (code: ${error.code})`);
+    }
+
+    if (!data) {
+      throw new Error(`Failed to create semester. No data returned from Supabase. Status: ${status} - ${statusText}`);
+    }
+    
     return {
       id: data.id,
       name: data.name,
@@ -35,12 +42,19 @@ export const semesterService = {
   },
 
   async update(id: string, name: string): Promise<void> {
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('semesters')
       .update({ name })
-      .eq('id', id);
+      .eq('id', id)
+      .select();
 
-    if (error) throw error;
+    if (error) {
+      throw new Error(`Supabase error: ${error.message} (code: ${error.code})`);
+    }
+
+    if (!data || data.length === 0) {
+      throw new Error("Update failed: The semester was not found or you don't have permission to edit it.");
+    }
   },
 
   async delete(id: string): Promise<void> {

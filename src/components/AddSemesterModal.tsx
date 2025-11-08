@@ -4,9 +4,10 @@ import { X } from 'lucide-react';
 interface AddSemesterModalProps {
   onClose: () => void;
   onAdd: (name: string) => void;
+  submissionError?: string | null;
 }
 
-const AddSemesterModal = ({ onClose, onAdd }: AddSemesterModalProps) => {
+const AddSemesterModal = ({ onClose, onAdd, submissionError }: AddSemesterModalProps) => {
   const [name, setName] = useState('');
   const [error, setError] = useState('');
 
@@ -50,6 +51,7 @@ const AddSemesterModal = ({ onClose, onAdd }: AddSemesterModalProps) => {
               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-all"
             />
             {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+            {submissionError && <p className="text-red-500 text-sm mt-1">{submissionError}</p>}
           </div>
 
           <div className="flex gap-3">

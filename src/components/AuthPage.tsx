@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { LogIn, Mail, Lock } from 'lucide-react';
+import { LogIn, Mail, Lock, User } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
 const AuthPage = () => {
   const [isSignIn, setIsSignIn] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [username, setUsername] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { signIn, signUp } = useAuth();
@@ -19,7 +20,7 @@ const AuthPage = () => {
       if (isSignIn) {
         await signIn(email, password);
       } else {
-        await signUp(email, password);
+        await signUp(email, password, username);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
@@ -51,6 +52,24 @@ const AuthPage = () => {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          {!isSignIn && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Username
+              </label>
+              <div className="relative">
+                <User className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+                <input
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="Choose a username"
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-all"
+                  required
+                />
+              </div>
+            </div>
+          )}
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Email

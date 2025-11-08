@@ -10,7 +10,7 @@ interface WhatIfCalculatorProps {
 }
 
 const WhatIfCalculator = ({ initialCGPA = 0, initialCredits = 0 }: WhatIfCalculatorProps) => {
-  const [currentCGPA, setCurrentCGPA] = useState(initialCGPA > 0 ? initialCGPA.toString() : '');
+  const [currentCGPA, setCurrentCGPA] = useState(initialCGPA > 0 ? initialCGPA.toFixed(2) : '');
   const [currentCredits, setCurrentCredits] = useState(initialCredits > 0 ? initialCredits.toString() : '');
   const [courses, setCourses] = useState<HypotheticalCourse[]>([]);
   const [errors, setErrors] = useState<{ cgpa?: string; credits?: string }>({});
@@ -234,7 +234,7 @@ const WhatIfCalculator = ({ initialCGPA = 0, initialCredits = 0 }: WhatIfCalcula
             <div className="bg-white dark:bg-gray-800/50 rounded-lg p-4">
               <p className="text-sm text-gray-600 dark:text-gray-400 font-medium mb-1">Projected CGPA</p>
               <p className="text-2xl font-bold text-green-600 dark:text-green-400">
-                {projectedCGPA.toFixed(2)}
+                {projectedCGPA.toFixed(1)}
               </p>
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                 {projectedCGPA > parseFloat(currentCGPA) ? '↑' : projectedCGPA < parseFloat(currentCGPA) ? '↓' : '='}{' '}

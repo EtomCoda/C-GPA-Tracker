@@ -17,6 +17,7 @@ const Dashboard = ({ onValuesChange }: DashboardProps) => {
   const [semesters, setSemesters] = useState<Semester[]>([]);
   const [goal, setGoal] = useState<GoalData | null>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [addError, setAddError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -39,7 +40,7 @@ const Dashboard = ({ onValuesChange }: DashboardProps) => {
     };
 
     loadData();
-  }, [user]);
+  }, [user?.id]);
 
   const cgpa = calculateCGPA(semesters);
   const totalCredits = getTotalCredits(semesters);
@@ -53,11 +54,13 @@ const Dashboard = ({ onValuesChange }: DashboardProps) => {
   const handleAddSemester = async (name: string) => {
     if (!user) return;
     try {
+      setAddError(null);
       const newSemester = await semesterService.create(user.id, name);
       setSemesters([...semesters, newSemester]);
       setIsAddModalOpen(false);
     } catch (error) {
       console.error('Error adding semester:', error);
+      setAddError(error instanceof Error ? error.message : 'An unknown error occurred.');
     }
   };
 
@@ -71,11 +74,15 @@ const Dashboard = ({ onValuesChange }: DashboardProps) => {
   };
 
   const handleUpdateSemester = async (updatedSemester: Semester) => {
+    const oldSemesters = semesters;
+    setSemesters(semesters.map(s => s.id === updatedSemester.id ? updatedSemester : s));
+
     try {
       await semesterService.update(updatedSemester.id, updatedSemester.name);
-      setSemesters(semesters.map(s => s.id === updatedSemester.id ? updatedSemester : s));
     } catch (error) {
+      alert(`Error: Could not update semester name. ${error instanceof Error ? error.message : 'An unknown error occurred.'}`);
       console.error('Error updating semester:', error);
+      setSemesters(oldSemesters);
     }
   };
 
@@ -157,7 +164,10 @@ const Dashboard = ({ onValuesChange }: DashboardProps) => {
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white">My Semesters</h2>
         <button
-          onClick={() => setIsAddModalOpen(true)}
+          onClick={() => {
+            setIsAddModalOpen(true);
+            setAddError(null);
+          }}
           className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors shadow-md"
         >
           <Plus className="w-5 h-5" />
@@ -175,7 +185,10 @@ const Dashboard = ({ onValuesChange }: DashboardProps) => {
             Start tracking your academic progress by adding your first semester
           </p>
           <button
-            onClick={() => setIsAddModalOpen(true)}
+            onClick={() => {
+            setIsAddModalOpen(true);
+            setAddError(null);
+          }}
             className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors"
           >
             Add Your First Semester
@@ -222,6 +235,7 @@ const Dashboard = ({ onValuesChange }: DashboardProps) => {
         <AddSemesterModal
           onClose={() => setIsAddModalOpen(false)}
           onAdd={handleAddSemester}
+          submissionError={addError}
         />
       )}
     </div>
