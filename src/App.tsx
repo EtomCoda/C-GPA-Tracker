@@ -38,11 +38,9 @@ function AppContent() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-3">
-              <div className="bg-gradient-to-br from-blue-500 to-green-500 p-2 rounded-lg">
-                <Home className="w-6 h-6 text-white" />
-              </div>
-              <h1 className="text-xl font-bold text-gray-900 dark:text-white">
-                GPA Tracker
+              <img src="/horizon.png" alt="Horizon Logo" className="w-12 h-12 object-contain" />
+              <h1 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-green-500">
+                Horizon
               </h1>
             </div>
             <div className="flex items-center gap-4">
@@ -118,7 +116,7 @@ function AppContent() {
       <footer className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 mt-12">
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <p className="text-center text-gray-600 dark:text-gray-400 text-sm">
-            GPA Tracker - Track your academic progress with ease
+            Horizon - Stay one step ahead.
           </p>
           <p className="absolute right-4 sm:right-6 lg:right-8 top-0 bottom-0 flex items-center text-gray-600 dark:text-gray-400 text-sm">
             © {year} EtomCoda

@@ -43,7 +43,7 @@ export const saveGoal = (goal: GoalData): void => {
 export const loadTheme = (): 'light' | 'dark' => {
   try {
     const theme = localStorage.getItem(THEME_KEY);
-    return (theme as 'light' | 'dark') || 'light';
+    return (theme as 'light' | 'dark') || 'dark';
   } catch (error) {
     console.error('Error loading theme:', error);
     return 'light';

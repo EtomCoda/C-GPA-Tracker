@@ -79,7 +79,7 @@ const WhatIfCalculator = ({ initialCGPA = 0, initialCredits = 0 }: WhatIfCalcula
             <Calculator className="w-6 h-6 text-blue-600 dark:text-blue-400" />
           </div>
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">What-If GPA Calculator</h2>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">What-If Calculator</h2>
             <p className="text-gray-600 dark:text-gray-400 text-sm">
               Predict your future CGPA by adding hypothetical courses
             </p>
