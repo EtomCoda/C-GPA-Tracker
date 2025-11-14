@@ -82,8 +82,8 @@ const SemesterCard = ({ semester, onDelete, onUpdate }: SemesterCardProps) => {
     <>
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden transition-all hover:shadow-lg">
         <div className="p-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-4 flex-1">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 flex-1">
               <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
                 {semester.name}
               </h3>
@@ -96,7 +96,7 @@ const SemesterCard = ({ semester, onDelete, onUpdate }: SemesterCardProps) => {
                 </span>
               </div>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 self-end sm:self-center">
               <button
                 onClick={() => setIsEditOpen(true)}
                 className="p-2 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"

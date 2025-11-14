@@ -17,18 +17,18 @@ const CourseItem = ({ course, onDelete, onUpdate }: CourseItemProps) => {
 
   return (
     <>
-      <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors gap-4">
         <div className="flex-1">
           <h5 className="font-medium text-gray-900 dark:text-white">{course.name}</h5>
-          <div className="flex gap-3 mt-1 text-sm text-gray-600 dark:text-gray-400">
+          <div className="flex flex-wrap gap-x-3 gap-y-1 mt-1 text-sm text-gray-600 dark:text-gray-400">
             <span>{course.creditHours} credit{course.creditHours !== 1 ? 's' : ''}</span>
-            <span>•</span>
+            <span className="hidden sm:inline">•</span>
             <span>Grade: {course.grade}</span>
-            <span>•</span>
+            <span className="hidden sm:inline">•</span>
             <span>Points: {gradePoint.toFixed(2)}</span>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 self-end sm:self-center">
           <button
             onClick={() => setIsEditOpen(true)}
             className="p-2 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
