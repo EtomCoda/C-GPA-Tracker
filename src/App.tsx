@@ -1,13 +1,14 @@
 import { Analytics } from "@vercel/analytics/react";
 import { useState } from "react";
-import { Home, Calculator, Moon, Sun, LogOut } from "lucide-react";
+import { Home, Calculator, Moon, Sun, LogOut, MessageSquare } from "lucide-react";
 import { ThemeProvider, useTheme } from "./contexts/ThemeContext";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import AuthPage from "./components/AuthPage";
 import Dashboard from "./components/Dashboard";
 import WhatIfCalculator from "./components/WhatIfCalculator";
+import Suggestions from "./components/Suggestions";
 
-type Tab = "dashboard" | "calculator";
+type Tab = "dashboard" | "calculator" | "suggestions";
 
 function AppContent() {
   const [activeTab, setActiveTab] = useState<Tab>("dashboard");
@@ -94,6 +95,17 @@ function AppContent() {
             <Calculator className="w-5 h-5" />
             What-If Calculator
           </button>
+          <button
+            onClick={() => setActiveTab("suggestions")}
+            className={`flex items-center gap-2 px-4 py-3 font-medium transition-all border-b-2 ${
+              activeTab === "suggestions"
+                ? "text-blue-600 dark:text-blue-400 border-blue-600 dark:border-blue-400"
+                : "text-gray-600 dark:text-gray-400 border-transparent hover:text-gray-900 dark:hover:text-white"
+            }`}
+          >
+            <MessageSquare className="w-5 h-5" />
+            Suggestions
+          </button>
         </div>
 
         <div className="transition-all">
@@ -104,11 +116,13 @@ function AppContent() {
                 setCalculatorCredits(credits);
               }}
             />
-          ) : (
+          ) : activeTab === "calculator" ? (
             <WhatIfCalculator
               initialCGPA={calculatorCGPA}
               initialCredits={calculatorCredits}
             />
+          ) : (
+            <Suggestions />
           )}
         </div>
       </div>
