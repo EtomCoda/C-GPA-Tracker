@@ -138,7 +138,7 @@ const Dashboard = ({ onValuesChange }: DashboardProps) => {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border-l-4 border-purple-500">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border-l-4 border-[rgb(34,149,197)]">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">Semesters</p>
@@ -146,8 +146,8 @@ const Dashboard = ({ onValuesChange }: DashboardProps) => {
                 {semesters.length}
               </p>
             </div>
-            <div className="bg-purple-100 dark:bg-purple-900/30 p-3 rounded-lg">
-              <Target className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+            <div className="bg-[rgb(34,149,197)]/20 p-3 rounded-lg">
+              <Target className="w-6 h-6 text-[rgb(34,149,197)]" />
             </div>
           </div>
         </div>
