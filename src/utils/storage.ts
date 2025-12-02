@@ -9,7 +9,9 @@ export const loadSemesters = (): Semester[] => {
     const data = localStorage.getItem(SEMESTERS_KEY);
     return data ? JSON.parse(data) : [];
   } catch (error) {
-    console.error('Error loading semesters:', error);
+    if (import.meta.env.DEV) {
+      console.error('Error loading semesters:', error);
+    }
     return [];
   }
 };
@@ -18,7 +20,9 @@ export const saveSemesters = (semesters: Semester[]): void => {
   try {
     localStorage.setItem(SEMESTERS_KEY, JSON.stringify(semesters));
   } catch (error) {
-    console.error('Error saving semesters:', error);
+    if (import.meta.env.DEV) {
+      console.error('Error saving semesters:', error);
+    }
   }
 };
 
@@ -27,7 +31,9 @@ export const loadGoal = (): GoalData | null => {
     const data = localStorage.getItem(GOAL_KEY);
     return data ? JSON.parse(data) : null;
   } catch (error) {
-    console.error('Error loading goal:', error);
+    if (import.meta.env.DEV) {
+      console.error('Error loading goal:', error);
+    }
     return null;
   }
 };
@@ -36,7 +42,9 @@ export const saveGoal = (goal: GoalData): void => {
   try {
     localStorage.setItem(GOAL_KEY, JSON.stringify(goal));
   } catch (error) {
-    console.error('Error saving goal:', error);
+    if (import.meta.env.DEV) {
+      console.error('Error saving goal:', error);
+    }
   }
 };
 
@@ -45,7 +53,9 @@ export const loadTheme = (): 'light' | 'dark' => {
     const theme = localStorage.getItem(THEME_KEY);
     return (theme as 'light' | 'dark') || 'dark';
   } catch (error) {
-    console.error('Error loading theme:', error);
+    if (import.meta.env.DEV) {
+      console.error('Error loading theme:', error);
+    }
     return 'light';
   }
 };
@@ -54,6 +64,8 @@ export const saveTheme = (theme: 'light' | 'dark'): void => {
   try {
     localStorage.setItem(THEME_KEY, theme);
   } catch (error) {
-    console.error('Error saving theme:', error);
+    if (import.meta.env.DEV) {
+      console.error('Error saving theme:', error);
+    }
   }
 };

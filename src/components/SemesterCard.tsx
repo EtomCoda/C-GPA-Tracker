@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Edit2, Trash2, ChevronDown, ChevronUp, Plus, BookOpen } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { Semester, Course } from '../types';
 import { calculateSemesterGPA } from '../utils/gpaCalculations';
 import { courseService } from '../services/database';
@@ -40,8 +41,12 @@ const SemesterCard = ({ semester, onDelete, onUpdate }: SemesterCardProps) => {
       };
       onUpdate(updatedSemester);
       setIsAddCourseOpen(false);
+      toast.success('Course added successfully');
     } catch (error) {
-      console.error('Error adding course:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error adding course:', error);
+      }
+      toast.error('Failed to add course');
     }
   };
 
@@ -56,8 +61,12 @@ const SemesterCard = ({ semester, onDelete, onUpdate }: SemesterCardProps) => {
         gpa: calculateSemesterGPA(updatedCourses, gradePoints),
       };
       onUpdate(updatedSemester);
+      toast.success('Course deleted successfully');
     } catch (error) {
-      console.error('Error deleting course:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error deleting course:', error);
+      }
+      toast.error('Failed to delete course');
     }
   };
 
@@ -74,8 +83,12 @@ const SemesterCard = ({ semester, onDelete, onUpdate }: SemesterCardProps) => {
         gpa: calculateSemesterGPA(updatedCourses, gradePoints),
       };
       onUpdate(updatedSemester);
+      toast.success('Course updated successfully');
     } catch (error) {
-      console.error('Error updating course:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error updating course:', error);
+      }
+      toast.error('Failed to update course');
     }
   };
 

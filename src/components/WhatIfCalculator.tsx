@@ -36,7 +36,9 @@ const WhatIfCalculator = ({ initialCGPA = 0, initialCredits = 0 }: WhatIfCalcula
           setCourses(parsed.courses || []);
         }
       } catch (e) {
-        console.error('Failed to parse saved what-if data', e);
+        if (import.meta.env.DEV) {
+          console.error('Failed to parse saved what-if data', e);
+        }
       }
     }
     setIsLoaded(true);
