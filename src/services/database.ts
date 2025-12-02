@@ -58,12 +58,30 @@ export const semesterService = {
   },
 
   async delete(id: string): Promise<void> {
-    const { error } = await supabase
-      .from('semesters')
+    // First delete all courses in this semester
+    const { error: coursesError } = await supabase
+      .from('courses')
       .delete()
+      .eq('semester_id', id);
+
+    if (coursesError) throw coursesError;
+
+    // Then delete the semester
+    const { error, count } = await supabase
+      .from('semesters')
+      .delete({ count: 'exact' })
       .eq('id', id);
 
-    if (error) throw error;
+    if (error) {
+      if (import.meta.env.DEV) {
+        console.error('Supabase delete semester error:', error);
+      }
+      throw error;
+    }
+    
+    if (count === 0) {
+      console.warn('Semester delete returned 0 rows affected. ID might be wrong or RLS blocked it.');
+    }
   },
 };
 
@@ -222,7 +240,9 @@ export const profileService = {
       });
 
     if (upsertError) {
-      console.error('Profile update failed:', upsertError);
+      if (import.meta.env.DEV) {
+        console.error('Profile update failed:', upsertError);
+      }
       // We don't throw here to prevent blocking the UI
       // The local state will still update
     }

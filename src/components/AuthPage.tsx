@@ -60,7 +60,9 @@ const AuthPage = () => {
         await signUp(email, password, username);
       }
     } catch (err) {
-      console.error('Auth error:', err);
+      if (import.meta.env.DEV) {
+        console.error('Auth error:', err);
+      }
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setLoading(false);

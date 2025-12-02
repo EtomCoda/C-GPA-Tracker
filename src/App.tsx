@@ -1,5 +1,6 @@
 import { Analytics, track } from "@vercel/analytics/react";
 import { useState, useEffect } from "react";
+import { Toaster } from "react-hot-toast";
 import { Home, Calculator, Moon, Sun, LogOut, MessageSquare } from "lucide-react";
 import { ThemeProvider, useTheme } from "./contexts/ThemeContext";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
@@ -166,6 +167,7 @@ function App() {
         }
         return event;
       }} />
+      <Toaster position="top-right" />
     </ThemeProvider>
   );
 }

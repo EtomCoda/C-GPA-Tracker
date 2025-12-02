@@ -29,7 +29,9 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           setGradingScaleState(profile.grading_scale as GradingScaleType);
         }
       } catch (error) {
-        console.error('Error loading settings:', error);
+        if (import.meta.env.DEV) {
+          console.error('Error loading settings:', error);
+        }
       } finally {
         setIsLoading(false);
       }
@@ -44,7 +46,9 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       try {
         await profileService.update(user.id, { grading_scale: scale });
       } catch (error) {
-        console.error('Error updating settings:', error);
+        if (import.meta.env.DEV) {
+          console.error('Error updating settings:', error);
+        }
         // Optionally revert state on error
       }
     }
