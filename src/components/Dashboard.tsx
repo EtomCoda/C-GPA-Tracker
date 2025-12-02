@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, Target, TrendingUp, BookOpen, Settings, Info } from 'lucide-react';
+import { Plus, Target, TrendingUp, BookOpen, Settings, Info, Upload } from 'lucide-react';
 import { Semester, GoalData } from '../types';
 import { calculateCGPA, getTotalCredits } from '../utils/gpaCalculations';
 import { useAuth } from '../contexts/AuthContext';
@@ -9,6 +9,8 @@ import { semesterService, courseService, goalService } from '../services/databas
 import SemesterCard from './SemesterCard';
 import GoalCard from './GoalCard';
 import AddSemesterModal from './AddSemesterModal';
+import ScanResultsModal from './ScanResultsModal';
+import { Course } from '../types';
 
 interface DashboardProps {
   onValuesChange?: (cgpa: number, credits: number) => void;
@@ -20,6 +22,8 @@ const Dashboard = ({ onValuesChange }: DashboardProps) => {
   const [semesters, setSemesters] = useState<Semester[]>([]);
   const [goal, setGoal] = useState<GoalData | null>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isScanModalOpen, setIsScanModalOpen] = useState(false);
+  const [scannedCourses, setScannedCourses] = useState<Partial<Course>[]>([]);
   const [addError, setAddError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -70,8 +74,31 @@ const Dashboard = ({ onValuesChange }: DashboardProps) => {
     try {
       setAddError(null);
       const newSemester = await semesterService.create(user.id, name);
+      
+      // If we have scanned courses, add them to the new semester
+      if (scannedCourses.length > 0) {
+        for (const course of scannedCourses) {
+          if (course.name && course.creditHours && course.grade) {
+            await courseService.create(newSemester.id, {
+              name: course.name,
+              creditHours: course.creditHours,
+              grade: course.grade,
+            });
+          }
+        }
+        // Refresh to get the new courses
+        const updatedCourses = await courseService.getBySemesterId(newSemester.id);
+        newSemester.courses = updatedCourses;
+      }
+
       setSemesters([...semesters, newSemester]);
       setIsAddModalOpen(false);
+      
+      if (scannedCourses.length > 0) {
+        alert(`Successfully imported ${scannedCourses.length} courses from your upload!`);
+      }
+      
+      setScannedCourses([]); // Clear scanned courses
     } catch (error) {
       console.error('Error adding semester:', error);
       setAddError(error instanceof Error ? error.message : 'An unknown error occurred.');
@@ -239,6 +266,13 @@ const Dashboard = ({ onValuesChange }: DashboardProps) => {
           <Plus className="w-5 h-5" />
           <span className="hidden sm:inline">Add Semester</span>
         </button>
+        <button
+          onClick={() => setIsScanModalOpen(true)}
+          className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors shadow-md ml-2"
+        >
+          <Upload className="w-5 h-5" />
+          <span className="hidden sm:inline">Upload Results</span>
+        </button>
       </div>
 
       {semesters.length === 0 ? (
@@ -299,9 +333,23 @@ const Dashboard = ({ onValuesChange }: DashboardProps) => {
 
       {isAddModalOpen && (
         <AddSemesterModal
-          onClose={() => setIsAddModalOpen(false)}
+          onClose={() => {
+            setIsAddModalOpen(false);
+            setScannedCourses([]); // Clear if cancelled
+          }}
           onAdd={handleAddSemester}
           submissionError={addError}
+        />
+      )}
+
+      {isScanModalOpen && (
+        <ScanResultsModal
+          onClose={() => setIsScanModalOpen(false)}
+          onScanComplete={(courses) => {
+            setScannedCourses(courses);
+            setIsScanModalOpen(false);
+            setIsAddModalOpen(true); // Open add semester modal to confirm name
+          }}
         />
       )}
     </div>
