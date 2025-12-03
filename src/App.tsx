@@ -17,14 +17,14 @@ function AppContent() {
   const [calculatorCGPA, setCalculatorCGPA] = useState(0);
   const [calculatorCredits, setCalculatorCredits] = useState(0);
   const { theme, toggleTheme } = useTheme();
-  const { user, loading, signOut } = useAuth();
+  const { user, loading, signOut, passwordRecoveryMode } = useAuth();
   const year = new Date().getFullYear();
 
   useEffect(() => {
     track('Tab Change', { tab: activeTab });
   }, [activeTab]);
 
-  if (window.location.pathname === '/update-password') {
+  if (passwordRecoveryMode || window.location.pathname === '/update-password') {
     return <UpdatePasswordPage />;
   }
 

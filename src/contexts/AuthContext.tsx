@@ -17,7 +17,10 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [passwordRecoveryMode, setPasswordRecoveryMode] = useState(false);
+  const [passwordRecoveryMode, setPasswordRecoveryMode] = useState(() => {
+    // Check URL immediately during component initialization
+    return typeof window !== 'undefined' && window.location.hash.includes('type=recovery');
+  });
 
   useEffect(() => {
     let mounted = true;
@@ -25,11 +28,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const initializeAuth = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       
-      // Check for recovery in URL
-      if (window.location.hash && window.location.hash.includes('type=recovery')) {
-        setPasswordRecoveryMode(true);
-      }
-
       if (mounted) {
         setUser(session?.user ?? null);
         setLoading(false);
