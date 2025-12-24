@@ -131,9 +131,9 @@ const WhatIfCalculator = ({ initialCGPA = 0, initialCredits = 0 }: WhatIfCalcula
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">What-If Calculator</h2>
               <div className="relative group">
                 <Info className="w-5 h-5 text-gray-400 dark:text-gray-500 cursor-help" />
-                <div className="absolute bottom-full mb-2 w-72 bg-gray-900 text-white text-xs rounded py-2 px-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                <div className="absolute bottom-full mb-2 w-64 md:w-72 bg-gray-900 text-white text-xs rounded py-2 px-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-10 right-0 left-auto md:left-1/2 md:right-auto md:-translate-x-1/2">
                   This tool helps you predict your future CGPA. Enter your current CGPA and credits, then add hypothetical courses and grades to see the potential outcome.
-                  <svg className="absolute text-gray-900 h-2 w-full left-0 top-full" x="0px" y="0px" viewBox="0 0 255 255">
+                  <svg className="absolute text-gray-900 h-2 w-5 top-full right-0 left-auto md:left-1/2 md:right-auto md:-translate-x-1/2" x="0px" y="0px" viewBox="0 0 255 255">
                     <polygon className="fill-current" points="0,0 127.5,127.5 255,0"/>
                   </svg>
                 </div>

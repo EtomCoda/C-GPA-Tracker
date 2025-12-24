@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Target, TrendingUp, Info } from 'lucide-react';
+import { Target, TrendingUp, Info, Edit2 } from 'lucide-react';
 
 interface GoalCardProps {
   currentCGPA: number;
@@ -48,9 +48,9 @@ const GoalCard = ({ currentCGPA, targetCGPA, maxCGPA = 5.0, onUpdateGoal }: Goal
               <h3 className="text-xl font-bold text-gray-900 dark:text-white">My Goal</h3>
               <div className="relative group">
                 <Info className="w-4 h-4 text-gray-400 dark:text-gray-500 cursor-help" />
-                <div className="absolute bottom-full mb-2 w-64 bg-gray-900 text-white text-xs rounded py-2 px-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                <div className="absolute bottom-full mb-2 w-48 sm:w-64 bg-gray-900 text-white text-xs rounded py-2 px-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-10 -left-2 md:left-1/2 md:-translate-x-1/2 md:right-auto">
                   Set a target CGPA to track your progress over time. This helps you stay focused on your academic objectives.
-                  <svg className="absolute text-gray-900 h-2 w-full left-0 top-full" x="0px" y="0px" viewBox="0 0 255 255">
+                  <svg className="absolute text-gray-900 h-2 w-5 top-full left-2 md:left-1/2 md:-translate-x-1/2 md:right-auto" x="0px" y="0px" viewBox="0 0 255 255">
                     <polygon className="fill-current" points="0,0 127.5,127.5 255,0"/>
                   </svg>
                 </div>
@@ -109,10 +109,13 @@ const GoalCard = ({ currentCGPA, targetCGPA, maxCGPA = 5.0, onUpdateGoal }: Goal
               <p className="text-2xl font-bold text-gray-900 dark:text-white">{currentCGPA.toFixed(2)}</p>
             </div>
             <div 
-              className="bg-white dark:bg-gray-800/50 rounded-lg p-4 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors"
+              className="bg-white dark:bg-gray-800/50 rounded-lg p-4 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors group relative"
               onClick={() => setIsEditing(true)}
             >
-              <p className="text-sm text-gray-600 dark:text-gray-400 font-medium mb-1">Target CGPA</p>
+              <div className="flex justify-between items-start">
+                <p className="text-sm text-gray-600 dark:text-gray-400 font-medium mb-1">Target CGPA</p>
+                <Edit2 className="w-3 h-3 text-gray-400 opacity-50 group-hover:opacity-100" />
+              </div>
               <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{targetCGPA.toFixed(2)}</p>
             </div>
             <div className="bg-white dark:bg-gray-800/50 rounded-lg p-4">

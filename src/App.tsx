@@ -51,12 +51,15 @@ function AppContent() {
   );
 }
 
+import { getMotivationalGreeting } from "./utils/greetings";
+
 function AppView() {
   const [activeTab, setActiveTab] = useState<Tab>("dashboard");
   const { theme, toggleTheme } = useTheme();
   const { user, signOut } = useAuth();
   const { semesters } = useData();
   const { gradingScale } = useSettings();
+  const [greeting] = useState(getMotivationalGreeting());
   const year = new Date().getFullYear();
 
   const gradePoints = getGradePoints(gradingScale);
@@ -75,9 +78,6 @@ function AppView() {
               </h1>
             </div>
             <div className="flex items-center gap-4">
-              <span className="text-sm text-gray-600 dark:text-gray-400 hidden sm:inline">
-                Hey, {user!.user_metadata.username}!
-              </span>
               <button
                 onClick={toggleTheme}
                 className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
@@ -102,6 +102,14 @@ function AppView() {
       </nav>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-28">
+        <div className="mb-8 animate-fade-in">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+            Hello, <span className="text-blue-600 dark:text-blue-400">{user?.user_metadata.username}</span>! 👋
+          </h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-2">
+            {greeting}
+          </p>
+        </div>
         <div className="flex gap-4 mb-6 border-b border-gray-200 dark:border-gray-700">
           <button
             onClick={() => setActiveTab("dashboard")}

@@ -162,7 +162,10 @@ const SemesterCard = ({ semester, onDelete, onUpdate }: SemesterCardProps) => {
               </div>
 
               {courses.length === 0 ? (
-                <div className="text-center py-10 bg-gray-50 dark:bg-gray-700/50 rounded-lg border-2 border-dashed border-gray-200 dark:border-gray-600">
+                <div 
+                  className="text-center py-10 bg-gray-50 dark:bg-gray-700/50 rounded-lg border-2 border-dashed border-gray-200 dark:border-gray-600 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  onClick={() => setIsAddCourseOpen(true)}
+                >
                   <div className="bg-gray-100 dark:bg-gray-700 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
                     <BookOpen className="w-6 h-6 text-gray-400 dark:text-gray-500" />
                   </div>

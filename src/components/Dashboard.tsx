@@ -188,7 +188,7 @@ const Dashboard = () => {
           </div>
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">No semesters yet</h3>
           <p className="text-gray-600 dark:text-gray-400 mb-4">
-            Start tracking your academic progress by adding your first semester or uploading results
+            Start tracking your academic progress by adding your first semester or uploading your results
           </p>
           <button
             onClick={() => {
