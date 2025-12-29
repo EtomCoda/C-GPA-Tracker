@@ -1,9 +1,13 @@
 import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Mail, Lock, User, Eye, EyeOff, Check, X } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { validatePassword } from '../utils/passwordValidation';
 
 const AuthPage = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/dashboard";
   const [isSignIn, setIsSignIn] = useState(true);
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [email, setEmail] = useState('');
@@ -12,7 +16,7 @@ const AuthPage = () => {
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
-  const { signIn, signUp, resetPassword } = useAuth();
+  const { user, signIn, signUp, resetPassword } = useAuth();
   const [passwordValidation, setPasswordValidation] = useState({
     hasMinLength: false,
     hasUppercase: false,
@@ -21,6 +25,12 @@ const AuthPage = () => {
     hasSymbol: false,
   });
   const [showPassword, setShowPassword] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      navigate(from, { replace: true });
+    }
+  }, [user, navigate, from]);
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newPassword = e.target.value;
@@ -59,6 +69,7 @@ const AuthPage = () => {
       } else {
         await signUp(email, password, username);
       }
+      navigate(from, { replace: true });
     } catch (err) {
       if (import.meta.env.DEV) {
         console.error('Auth error:', err);
