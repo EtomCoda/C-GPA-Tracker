@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Plus, Target, TrendingUp, BookOpen, Settings, Info, Upload } from 'lucide-react';
 import { calculateCGPA, getTotalCredits } from '../utils/gpaCalculations';
 import { useSettings } from '../contexts/SettingsContext';
@@ -21,11 +22,21 @@ const Dashboard = () => {
     updateSemester,
     saveGoal,
   } = useData();
-
+  const location = useLocation();
+  // ... existing hooks ...
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isScanModalOpen, setIsScanModalOpen] = useState(false);
   const [scannedCourses, setScannedCourses] = useState<Partial<Course>[]>([]);
   const [addError, setAddError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (location.state?.openAddSemester) {
+      setIsAddModalOpen(true);
+      // Clear state so it doesn't reopen on refresh? 
+      // Ideally we would replace history but let's keep it simple for now
+      window.history.replaceState({}, document.title);
+    }
+  }, [location]);
 
   const gradePoints = getGradePoints(gradingScale);
   const cgpa = calculateCGPA(semesters, gradePoints);

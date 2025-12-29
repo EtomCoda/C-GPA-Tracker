@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { Lock, Eye, EyeOff, Check, X } from 'lucide-react';
 import { validatePassword } from '../utils/passwordValidation';
+import { Link } from 'react-router-dom';
 
 const UpdatePasswordPage = () => {
   const [password, setPassword] = useState('');
@@ -169,9 +170,9 @@ const UpdatePasswordPage = () => {
         )}
         {message && (
             <div className="mt-6 text-center">
-                <a href="/" className="text-blue-600 dark:text-blue-400 hover:underline font-medium">
+                <Link to="/auth" className="text-blue-600 dark:text-blue-400 hover:underline font-medium">
                     Back to Sign In
-                </a>
+                </Link>
             </div>
         )}
       </div>
